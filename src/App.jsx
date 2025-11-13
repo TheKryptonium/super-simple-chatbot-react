@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import 'https://unpkg.com/supersimpledev@8.0.1/chatbot.js'
 import ChatMessage from "./components/ChatMessage";
 import ChatInput from "./components/ChatInput.jsx";
@@ -7,8 +7,10 @@ import ChatInput from "./components/ChatInput.jsx";
 export default function App(){
   const [chats, setChats] = useState([])
   const [msg, setMsg] = useState('')
-  const [msgUp, setMsgUp] = useState(false)
-  
+
+
+  const chatMessagesRef = useRef(null)
+
   const chatMessageComponents = chats.map( (chat, index)=>{
     return(<ChatMessage
       key={index}
@@ -17,6 +19,13 @@ export default function App(){
     />)
   })
 
+  useEffect(()=>{
+    const containerElem = (chatMessagesRef.current)
+    if(containerElem){
+      containerElem.scrollTop = containerElem.scrollHeight
+    }
+  }, [chatMessageComponents])
+  
   function saveInputText(event){
     const message = event.target.value
     setMsg(message)
@@ -36,7 +45,8 @@ export default function App(){
 
   return(
     <main>
-      <div className="chat-container">
+      <div className="chat-container"
+          ref={chatMessagesRef}>
         {chatMessageComponents}
       </div>
       <ChatInput 
